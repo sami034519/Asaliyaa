@@ -46,7 +46,7 @@ const Header = () => {
   return (
     <>
       {/* Top Info Bar */}
-      <div className="w-full bg-primary py-1 text-white overflow-hidden border-b fixed top-0 left-0 z-50">
+      <div className="w-full bg-secondary py-1 text-white overflow-hidden border-b fixed top-0 left-0 z-50">
         <div className="whitespace-nowrap animate-marquee flex">
           {products.concat(products).map((product, index) => (
             <span key={index} className="mx-8 text-lg font-medium">

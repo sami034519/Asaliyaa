@@ -1,5 +1,5 @@
 import React from 'react'
-import homebanner from "../../images/mainbannerdesktop.png"
+import homebanner from "../../images/mainbannerdesktop.webp"
 import mobilemainbanner from '../../images/mainbannermob2.png'
 function Home() {
   return (
