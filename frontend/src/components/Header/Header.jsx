@@ -21,11 +21,15 @@ const [error, setError] = useState("");
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart?.items || []);
   const cartQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
-  const cartTotal = cartItems.reduce((total, item) => total + item.price_small * item.quantity, 0);
+ const cartTotal = cartItems.reduce((total, item) => {
+  const price = Number(item.price) || 0;
+  return total + price * item.quantity;
+}, 0);
+
         console.log(cartItems);
   const navLinks = [
     "Honey", "Saffron", "Massage Oils", "Cooking Oils",
-    "Slagit", "Herbal Tea", "Desi Ghee", "Achhar",
+    "Slagit", "Herbal Tea", "Desi Ghee", "Achhar","Organic Flour","Organic Spices"
   ];
 
   const products = [
@@ -101,7 +105,7 @@ const handleloginadmin = () => {
           <div className="flex items-center gap-4">
             <Search size={22} onClick={() => setSearchOpen(true)} className="text-gray-600 cursor-pointer" />
             <div className="relative cursor-pointer" onClick={() => setCartOpen(true)}>
-              <ShoppingCart size={24} className="text-secondary" />
+              <ShoppingCart size={24} className="text-secondary z-50" />
               <span className="absolute -top-2 -right-2 bg-secondary text-white text-xs rounded-full px-1.5">{cartQuantity}</span>
             </div>
           </div>
@@ -140,11 +144,11 @@ const handleloginadmin = () => {
           <div className="relative flex w-[600px]"><SearchBar /></div>
           <div className="flex gap-x-5 justify-center items-center">
           <div className="relative cursor-pointer" onClick={() => setCartOpen(true)}>
-            <ShoppingCart size={28} className="text-secondary" />
+            <ShoppingCart size={28} className="text-secondary z-50" />
             <span className="absolute -top-2 -right-2 rounded-full bg-secondary px-2 text-xs text-white">{cartQuantity}</span>
           </div>
           {/* admin button */}
-          <div><button className="bg-primary px-3 py-2 text-white text-sm hover:bg-secondary" onClick={handleadmin}>Admin</button></div>
+          <div><button className="bg-primary rounded px-3 py-2 text-white text-sm hover:bg-secondary" onClick={handleadmin}>Admin</button></div>
           </div>
         </div>
 
@@ -173,8 +177,8 @@ const handleloginadmin = () => {
           <div className="text-base text-primary font-medium">📞 +92 123 4567890 | ✉️ info@example.com</div>
         </nav>
 
-        {/* Slide-in Cart Panel */}
-       {cartOpen && (
+      {/* Slide-in Cart Panel */}
+{cartOpen && (
   <div
     className="fixed inset-0 bg-black bg-opacity-40 z-[60] flex justify-end"
     onClick={() => setCartOpen(false)}
@@ -198,10 +202,12 @@ const handleloginadmin = () => {
       ) : (
         <>
           {cartItems.map((item) => (
-            <div key={item.id} className="flex items-center gap-3 mb-4">
+            <div key={`${item.id}-${item.selectedSize}`} className="flex items-center gap-3 mb-4">
               {/* Delete button in front of product image */}
               <button
-                onClick={() => dispatch(removeFromCart(item.id))}
+                onClick={() =>
+                  dispatch(removeFromCart({ id: item.id, selectedSize: item.selectedSize }))
+                }
                 className="text-red-600 font-bold text-lg hover:text-red-800"
                 title="Remove item"
               >
@@ -209,18 +215,16 @@ const handleloginadmin = () => {
               </button>
 
               <img
-                src={item.image_small || item.image_medium || item.image_large} alt={item.title}
+                src={item.image}
+                alt={item.title}
                 className="w-16 h-16 object-contain rounded"
               />
-             
-
 
               <div className="flex flex-col justify-between">
                 <h4 className="font-medium text-sm line-clamp-1">{item.title}</h4>
+                <span className="text-sm text-gray-600">Size: {item.selectedSize}</span>
                 <span className="text-sm text-gray-600">Qty: {item.quantity}</span>
-                <span className="font-semibold text-secondary">
-                  Rs. {item.price_small}
-                </span>
+                <span className="font-semibold text-secondary">Rs. {item.price}</span>
               </div>
             </div>
           ))}
@@ -230,7 +234,7 @@ const handleloginadmin = () => {
               Total: Rs. {cartTotal.toFixed(2)}
             </p>
             <NavLink to="/cart">
-              <button className="mt-4 w-full bg-secondary text-white py-2 rounded hover:bg-primary">
+              <button className="mt-4 w-full bg-secondary text-white py-2 rounded hover:bg-primary" onClick={() => setCartOpen(false)}>
                 See Your Cart
               </button>
             </NavLink>
@@ -240,6 +244,7 @@ const handleloginadmin = () => {
     </div>
   </div>
 )}
+
 
 
         {/* Mobile Search */}
@@ -287,7 +292,7 @@ const handleloginadmin = () => {
       </header>
 
       {/* Spacer for Fixed Header */}
-      <div className="pt-[170px] md:pt-[190px]" />
+      <div className="pt-[130px] md:pt-[190px]" />
     </>
   );
 };

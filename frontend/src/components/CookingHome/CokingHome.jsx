@@ -4,43 +4,72 @@ import "aos/dist/aos.css";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../Redux/cartSlice";
 import { FaArrowRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 function CookingHome() {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const category = "Cooking Oils";
 
   useEffect(() => {
-    AOS.init({ duration: 800 }); // Initialize AOS
+    AOS.init({ duration: 800 });
 
-    fetch(`https://asaliyaa.minnaminnie.com/get_products_by_category.php?category=${category}`)
+    fetch(
+      `https://asaliyaa.minnaminnie.com/get_products_by_category.php?category=${category}`
+    )
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") {
           setProducts(data.data);
         }
+        setLoading(false);
       })
-      .catch((err) => console.error("Failed to fetch:", err));
+      .catch((err) => {
+        console.error("Failed to fetch:", err);
+        setLoading(false);
+      });
   }, []);
 
   const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
+    const selectedSize = "Small"; // default to small
+    const price = product.price_small;
+
+    dispatch(
+      addToCart({
+        id: product.id,
+        title: product.title,
+        quantity: 1,
+        selectedSize,
+        image: product.image_small,
+        price,
+        price_small: product.price_small,
+        price_medium: product.price_medium,
+        price_large: product.price_large,
+      })
+    );
+  };
+
+  const goToDetail = (id) => {
+    navigate(`/product/${id}`);
   };
 
   return (
-    <>
-      {/* Banner */}
-      
+    <div className="py-10 px-4 sm:px-6 lg:px-20">
+      <h1
+        className="text-2xl lg:ml-0 ml-2 mb-4 font-bold text-gray-800 flex items-center gap-3"
+        data-aos="fade-up"
+      >
+        COOKING OILS
+        <FaArrowRight className="text-secondary text-2xl" />
+      </h1>
 
-      {/* Products Grid */}
-      <div className="py-10 px-4 sm:px-6 lg:px-20">
-        <h1
-               className="text-2xl lg:ml-0 ml-2 mb-4 font-bold text-gray-800 flex items-center gap-3"
-               data-aos="fade-up"
-             >
-               COOKING OILS
-               <FaArrowRight className="text-secondary text-2xl" />
-             </h1>
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <div className="w-10 h-10 border-4 border-gray-300 border-t-primary rounded-full animate-spin"></div>
+        </div>
+      ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product, index) => (
             <div
@@ -49,7 +78,11 @@ function CookingHome() {
               data-aos="zoom-in"
               data-aos-delay={index * 100}
             >
-              <div className="relative p-2 bg-gray-100 h-48 sm:h-56 md:h-64 overflow-hidden">
+              {/* Clickable Image Section */}
+              <div
+                onClick={() => goToDetail(product.id)}
+                className="cursor-pointer relative p-2 bg-gray-100 h-48 sm:h-56 md:h-64 overflow-hidden"
+              >
                 <img
                   src={product.image_medium}
                   alt={product.title}
@@ -61,6 +94,8 @@ function CookingHome() {
                   className="w-full h-full object-cover absolute top-0 left-0 opacity-0 hover:opacity-100 transition duration-300"
                 />
               </div>
+
+              {/* Info and Add to Cart */}
               <div className="p-4 text-center">
                 <h3 className="text-md font-semibold text-black">{product.title}</h3>
                 <p className="text-sm text-gray-600 mt-1">
@@ -76,8 +111,8 @@ function CookingHome() {
             </div>
           ))}
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 }
 

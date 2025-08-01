@@ -2,15 +2,18 @@ import React, { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../Redux/cartSlice";
+import { useNavigate } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
-import saffrondesktop from "../../images/saffronbannerdesktop.webp";
+import saffrondesktop from "../../images/saffronbannerdesktop1.png";
 import saffronmob from "../../images/saffronbannermob.png";
 
 function Saffron() {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const category = "Saffron";
 
   useEffect(() => {
@@ -22,17 +25,38 @@ function Saffron() {
           setProducts(data.data);
         }
       })
-      .catch((err) => console.error("Failed to fetch saffron products:", err));
+      .catch((err) => console.error("Failed to fetch saffron products:", err))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
+    dispatch(
+      addToCart({
+        ...product,
+        selectedSize: "Small",
+        price: product.price_small,
+        quantity: 1,
+        image: product.image_medium,
+      })
+    );
   };
+
+  const goToDetail = (id) => {
+    navigate(`/product/${id}`);
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center py-10 text-gray-600 text-lg">
+        Loading Saffron Products...
+      </div>
+    );
+  }
 
   return (
     <>
       {/* Banners */}
-      <div className="w-full overflow-hidden">
+      <div className="w-full mt-10 overflow-hidden">
         <img
           src={saffrondesktop}
           alt="Saffron Banner"
@@ -48,7 +72,7 @@ function Saffron() {
       </div>
 
       {/* Heading */}
-      <div className="px-4 sm:px-6 lg:px-20 mt-8">
+      <div className="px-4 sm:px-6 lg:px-20 mt-8 mb-10">
         <h1
           className="text-2xl mb-4 font-bold text-gray-800 flex items-center gap-3"
           data-aos="fade-up"
@@ -59,13 +83,17 @@ function Saffron() {
 
         {/* Product Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
+          {products.map((product, index) => (
             <div
               key={product.id}
               className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
-              data-aos="fade-up"
+              data-aos="zoom-in"
+              data-aos-delay={index * 100}
             >
-              <div className="relative p-2 bg-gray-100 h-48 sm:h-56 md:h-64 overflow-hidden">
+              <div
+                onClick={() => goToDetail(product.id)}
+                className="relative p-2 bg-gray-100 h-48 sm:h-56 md:h-64 overflow-hidden cursor-pointer"
+              >
                 <img
                   src={product.image_medium}
                   alt={product.title}
@@ -78,7 +106,12 @@ function Saffron() {
                 />
               </div>
               <div className="p-4 text-center">
-                <h3 className="text-md font-semibold text-black">{product.title}</h3>
+                <h3
+                  onClick={() => goToDetail(product.id)}
+                  className="text-md font-semibold text-black hover:underline cursor-pointer"
+                >
+                  {product.title}
+                </h3>
                 <p className="text-sm text-gray-600 mt-1">
                   Rs. {product.price_small} | {product.price_medium} | {product.price_large}
                 </p>

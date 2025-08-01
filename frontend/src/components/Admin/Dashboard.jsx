@@ -20,6 +20,8 @@ import {
   FaLeaf,
   FaFireAlt,
   FaPumpSoap,
+  FaBreadSlice,
+   FaPepperHot,
 } from "react-icons/fa";
 
 const categoryConfig = [
@@ -31,6 +33,8 @@ const categoryConfig = [
   { title: "Herbal Tea", icon: <FaLeaf /> },
   { title: "Desi Ghee", icon: <FaFireAlt /> },
   { title: "Achhar", icon: <FaPumpSoap /> },
+   { title: "Sugar Free Flour", icon: <FaBreadSlice /> },
+   { title: "Organic Spices", icon: <FaPepperHot /> },
 ];
 
 const navLinks = [
@@ -214,9 +218,7 @@ const Dashboard = () => {
                           className="h-48 w-full object-contain rounded mb-2"
                         />
                         <h3 className="font-bold text-lg">{product.title}</h3>
-                        <p className="text-sm mt-1 mb-2">
-                          {product.description}
-                        </p>
+                       
                         <div className="flex justify-between">
                           <button
                             onClick={() => handleUpdate(product)}

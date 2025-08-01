@@ -84,6 +84,8 @@ const AddProduct = ({ onClose }) => {
             <option value="Herbal Tea">Herbal Tea</option>
             <option value="Desi Ghee">Desi Ghee</option>
             <option value="Achhar">Achhar</option>
+            <option value="Sugar Free Flour">Sugar Free Flour</option>
+            <option value="Organic Spices">Organic Spices</option>
           </select>
 
           <input type="number" name="price_small" placeholder="Price Small" className="input border p-2" onChange={handleChange} required />

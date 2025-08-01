@@ -4,13 +4,16 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../Redux/cartSlice";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { useNavigate } from "react-router-dom";
 
-import herbalteadesk from "../../images/herbalteabannerdesktop.png";
+import herbalteadesk from "../../images/herbalteabannerdesktop1.png";
 import herbalteabannermob from "../../images/herbalteabannermobile.png";
 
 function HerbalTea() {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const category = "Herbal Tea";
 
   useEffect(() => {
@@ -21,18 +24,41 @@ function HerbalTea() {
         if (data.status === "success") {
           setProducts(data.data);
         }
+        setLoading(false);
       })
-      .catch((err) => console.error("Failed to fetch:", err));
+      .catch((err) => {
+        console.error("Failed to fetch:", err);
+        setLoading(false);
+      });
   }, []);
 
   const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
+     const selectedSize = "Small"; // Default size
+     const price = product.price_small;
+ 
+     dispatch(
+       addToCart({
+         id: product.id,
+         title: product.title,
+         quantity: 1,
+         selectedSize,
+         image: product.image_small,
+         price,
+         price_small: product.price_small,
+         price_medium: product.price_medium,
+         price_large: product.price_large,
+       })
+     );
+   };
+
+  const handleProductClick = (id) => {
+    navigate(`/product/${id}`);
   };
 
   return (
     <>
       {/* Banner */}
-      <div className="w-full overflow-hidden">
+      <div className="w-full mt-10 overflow-hidden">
         <img
           src={herbalteadesk}
           alt="Hero Banner"
@@ -48,7 +74,7 @@ function HerbalTea() {
       </div>
 
       {/* Heading */}
-      <div className="px-4 sm:px-6 lg:px-20 mt-8">
+      <div className="px-4 sm:px-6 lg:px-20 mt-8 mb-10">
         <h1
           className="text-2xl lg:ml-0 ml-2 mb-4 font-bold text-gray-800 flex items-center gap-3"
           data-aos="fade-up"
@@ -57,41 +83,50 @@ function HerbalTea() {
           <FaArrowRight className="text-secondary text-2xl" />
         </h1>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
-              data-aos="fade-up"
-            >
-              <div className="relative p-2 bg-gray-100 h-48 sm:h-56 md:h-64 overflow-hidden">
-                <img
-                  src={product.image_medium}
-                  alt={product.title}
-                  className="w-full h-full object-contain hover:opacity-0 transition duration-300"
-                />
-                <img
-                  src={product.image_medium}
-                  alt={product.title}
-                  className="w-full h-full object-cover absolute top-0 left-0 opacity-0 hover:opacity-100 transition duration-300"
-                />
-              </div>
-              <div className="p-4 text-center">
-                <h3 className="text-md font-semibold text-black">{product.title}</h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  Rs. {product.price_small} | {product.price_medium} | {product.price_large}
-                </p>
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  className="mt-3 bg-primary hover:bg-secondary text-white px-4 py-2 text-sm rounded transition"
+        {/* Loading State */}
+        {loading ? (
+          <div className="text-center py-10 text-gray-600 text-lg">Loading products...</div>
+        ) : products.length === 0 ? (
+          <div className="text-center py-10 text-gray-600 text-lg">No products found.</div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
+                data-aos="zoom-in"
+              >
+                <div
+                  className="relative p-2 bg-gray-100 h-48 sm:h-56 md:h-64 overflow-hidden cursor-pointer"
+                  onClick={() => handleProductClick(product.id)}
                 >
-                  Add to Cart
-                </button>
+                  <img
+                    src={product.image_medium}
+                    alt={product.title}
+                    className="w-full h-full object-contain hover:opacity-0 transition duration-300"
+                  />
+                  <img
+                    src={product.image_medium}
+                    alt={product.title}
+                    className="w-full h-full object-cover absolute top-0 left-0 opacity-0 hover:opacity-100 transition duration-300"
+                  />
+                </div>
+                <div className="p-4 text-center">
+                  <h3 className="text-md font-semibold text-black">{product.title}</h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Rs. {product.price_small} | {product.price_medium} | {product.price_large}
+                  </p>
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="mt-3 bg-primary hover:bg-secondary text-white px-4 py-2 text-sm rounded transition"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

@@ -10,6 +10,8 @@ import DesiGheehome from "../DesiGheeHome/Desigheehome";
 import HerbalTeaAtHome from "../HerbalTea/HerbalTeahome";
 import Honeyhome from "../Honey/Honeyhome";
 import Massagehome from "../massage/Massagehome";
+import OrganicFlourHome from "../OrganicFlour/OrganicFlourHome";
+import OrganicSpiceshome from "../Organic Spices/OrganicSpiceshome";
 function Home() {
   return (
     <>
@@ -44,7 +46,10 @@ function Home() {
       <Honeyhome />
       <Massagehome />
       <HerbalTeaAtHome />
+      <OrganicFlourHome/>
+      <OrganicSpiceshome/>
       <DesiGheehome />
+
 
       
       <ReviewCarousel />

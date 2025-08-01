@@ -10,6 +10,8 @@ const categories = [
   "Herbal Tea",
   "Desi Ghee",
   "Achhar",
+  "Sugar Free Flour",
+  "Organic Spices"
 ];
 
 const UpdateProductManager = ({ onClose }) => {

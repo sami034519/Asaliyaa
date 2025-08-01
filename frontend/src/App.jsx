@@ -13,11 +13,12 @@ import HerbalTea from './components/HerbalTea/HerbalTea';
 import DesiGhee from './components/DesiGhee/DesiGhee';
 import Acharr from './components/Achaar/Acharr';
 import CartPage from './components/Cartpage/CartPage';
-
+import OrganicFlour from './components/OrganicFlour/OrganicFlour';
 import { Provider } from 'react-redux';
 import store from './components/Redux/store';
-
+import OrganicSpices from './components/Organic Spices/OrganicSpices';
 import ScrollToTop from './components/ScrollToTop'; // optional scroll handler
+import ProductDetail from './components/ProductDetail/Productdetail';
 
 function AppWrapper() {
   const location = useLocation();
@@ -39,10 +40,15 @@ function AppWrapper() {
         <Route path="/slagit" element={<ShILAGIT />} />
         <Route path="/herbal-tea" element={<HerbalTea />} />
         <Route path="/desi-ghee" element={<DesiGhee />} />
+         <Route path="/organic-flour" element={<OrganicFlour />} />
+          <Route path="/organic-spices" element={<OrganicSpices />} />
         <Route path="/achhar" element={<Acharr />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
+         <Route path="/product/:id" element={<ProductDetail />} />
+
       </Routes>
 
       {!hideLayout && <Footer />}
