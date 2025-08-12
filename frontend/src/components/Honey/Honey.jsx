@@ -6,7 +6,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
 
-import mainbannerdek from "../../images/honeyBanner.png";
+import mainbannerdek from "../../images/honeyBanner.webp";
 import mainbannermob from "../../images/honeybannermob.webp";
 
 function Honey() {
