@@ -5,21 +5,11 @@ import achaarbanmob from '../../images/achaarbannermobile.png';
 import achaarbandesktop from '../../images/achaarbannerdesktop.png';
 import { FaArrowRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
 
 function Acharr() {
   const [products, setProducts] = useState([]);
   const dispatch = useDispatch();
   const category = "Achhar";
-
-  // ✅ Preload banner images so they show instantly on route change
-  useEffect(() => {
-    [achaarbanmob, achaarbandesktop].forEach(src => {
-      const img = new Image();
-      img.src = src;
-    });
-  }, []);
 
   useEffect(() => {
     fetch(`https://asaliyaa.minnaminnie.com/get_products_by_category.php?category=${category}`)
@@ -31,41 +21,44 @@ function Acharr() {
       })
       .catch((err) => console.error("Failed to fetch:", err));
   }, []);
+const handleAddToCart = (product) => {
+  const selectedSize = 'Small';
+  let price;
 
-  const handleAddToCart = (product) => {
-    const selectedSize = 'Small';
-    let price;
+  if (selectedSize === 'Small') price = product.price_small;
+  else if (selectedSize === 'Medium') price = product.price_medium;
+  else price = product.price_large;
 
-    if (selectedSize === 'Small') price = product.price_small;
-    else if (selectedSize === 'Medium') price = product.price_medium;
-    else price = product.price_large;
+  dispatch(addToCart({
+    id: product.id,
+    title: product.title,
+    quantity: 1,
+    selectedSize,
+    image: product.image_small,
+    price, // ✅ add this
+    price_small: product.price_small,
+    price_medium: product.price_medium,
+    price_large: product.price_large,
+  }));
+};
 
-    dispatch(addToCart({
-      id: product.id,
-      title: product.title,
-      quantity: 1,
-      selectedSize,
-      image: product.image_small,
-      price,
-      price_small: product.price_small,
-      price_medium: product.price_medium,
-      price_large: product.price_large,
-    }));
-  };
 
   return (
     <>
-      {/* Banner - now using <picture> so mobile/desktop only load what's needed */}
+      {/* Banner */}
       <div className="w-full mt-10 overflow-hidden">
-        <picture>
-          <source srcSet={achaarbanmob} media="(max-width: 768px)" />
-          <source srcSet={achaarbandesktop} media="(min-width: 769px)" />
+        <img
+          src={achaarbandesktop}
+          alt="Achhar Banner Desktop"
+          className="hidden lg:block w-full h-full object-cover"
+        />
+        <div className="h-auto mt-2 w-full overflow-hidden">
           <img
-            src={achaarbandesktop}
-            alt="Achhar Banner"
-            className="w-full h-full object-cover"
+            src={achaarbanmob}
+            alt="Achhar Banner Mobile"
+            className="block lg:hidden w-full h-full object-cover"
           />
-        </picture>
+        </div>
       </div>
 
       {/* Products Grid */}
@@ -82,20 +75,17 @@ function Acharr() {
               className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden relative"
               data-aos="zoom-in"
             >
-              {/* Product Link */}
+              {/* Wrap only the image and text in Link */}
               <Link to={`/product/${product.id}`}>
                 <div className="relative p-2 bg-gray-100 h-48 sm:h-56 md:h-64 overflow-hidden">
-                  {/* ✅ Lazy load with blur */}
-                  <LazyLoadImage
+                  <img
                     src={product.image_medium}
                     alt={product.title}
-                    effect="blur"
                     className="w-full h-full object-contain hover:opacity-0 transition duration-300"
                   />
-                  <LazyLoadImage
+                  <img
                     src={product.image_medium}
                     alt={product.title}
-                    effect="blur"
                     className="w-full h-full object-cover absolute top-0 left-0 opacity-0 hover:opacity-100 transition duration-300"
                   />
                 </div>
@@ -107,7 +97,7 @@ function Acharr() {
                 </div>
               </Link>
 
-              {/* Add to Cart */}
+              {/* Add to Cart button outside the Link */}
               <div className="p-4 pt-0 text-center">
                 <button
                   onClick={() => handleAddToCart(product)}
